@@ -1,1 +1,2 @@
 git config global 
+git config --global user.name
