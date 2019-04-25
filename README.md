@@ -1,182 +1,1125 @@
-Organization of a scientific computational project
-Core guiding principle: Someone unfamiliar with your project (including you, some months later)
-should be able to look at your files, understand what you did and why, and easily repeat it.
 
-Murphy’s Law for computational projects: For anything you do, you will probably have to repeat it
-again later (new data, new parameters, fixing bugs).
 
-General idea: Breaking a lengthy workflow into pieces makes it easier to understand, share, describe,
-and modify. Make your project modular, the modules being transparent and reproducible.
 
-Fun fact: Applying good practices in a scientific computational project can save you A LOT OF TIME
-later and make you a much happier person.
 
-Organization of files and directories
-Stick to one standardized and self-explanatory directory structure; suggested organization:
 
-       /Project_name
-           o notes.txt (project notes/lab notebook, chronologically organized, possibly
-              managed by a version control system; all project-related notes, e.g. information
-              from collaborators, observations, conclusions, new ideas, links to other documents
-              like images and tables; useful for meetings/progress reports; a simple text file is
-              often good enough, but can be a more complex format)
-           o additional possibly useful files: requirements.txt (defines computational
-              environment, tools/programs/databases), todo.txt (to-do list), README
-              (information explicitly intended for project users/collaborators)
-           o /doc (project-related documents, e.g. slides, images, pdfs and manuscripts)
-                    /manuscript1
-           o /bin (or /src, project-related code/scripts; if you keep your scripts in a system-
-              wide location, you might want to copy those that you use for the project)
-           o runall.sh script: some people use a universal driver script that runs all other
-              scripts and generates all results; this is useful, but can be less flexible than separate
-              experiments with their own driver scripts as suggested below
-           o /data (raw data and related metadata; make it read-only)
-                    /sample1 (logical organization) or e.g. 20180130 (chronological)
-                    /sample2 etc.
-           o /01_experimentX (e.g. 01_filter) or /20190315_experimentX (file name
-              starting with numeric identifier or date)
-                    01run.sh (main driver script, transforms files in ./data into files in
-                       ./results, completely automates all required steps; often combines calls
-                       to shell commands, self-written Python scripts and precompiled programs)
-                    02summarize.sh (a script evaluating the results)
-                    /bin (experimentX-specific scripts, may also reside in project-level /bin)
-                    /data (input data for experimentX, may be symbolic links to project-level
-                       /data/… files or /results/… files from other experiments)
-                    /results (results of experimentX)
-                    notes.txt (notes regarding experimentX – motivation for this experiment,
-                       explanation what happens here, conclusions, ideas, etc., but also version
-                       number or date of download of used tools and databases)
-                  /temp (temporary files, deleted upon completion of the experiment)
-          o   /02_experimentY (e.g. 02_parse)
-          o   /03_experimentZ (e.g. 03_visualization) etc.
 
-Driver script
-     Automates every data processing step like creating the required directory structure
-     Records every performed operation (beware of manual editing of output files)
-     Contains many informative comments
-     Contains all relevant information like file and directory names and passes them as
-      arguments to other scripts/programs
-     Stores paths and constants as variables in a separate section in the beginning, which makes
-      overview and modifications easier
-     Uses relative paths (if project folder is transferred to another location, it still works)
-     Checks data consistency/plausibility to make sure that things go as expected
-     Uses if (output_file does not exist), then <perform operation>
-      constructs to easily repeat parts of the experiment (after deletion of the respective files)
-     The environment in which the driver script operates should be clearly defined (required
-      tools and databases, and their versions)
-     Script should actually work if run in the defined environment 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  <link rel="dns-prefetch" href="https://github.githubassets.com">
+  <link rel="dns-prefetch" href="https://avatars0.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://avatars1.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://avatars2.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://github-cloud.s3.amazonaws.com">
+  <link rel="dns-prefetch" href="https://user-images.githubusercontent.com/">
 
-Alternative: Jupyter notebook
-     Jupyter notebooks are a useful data science tool if used properly (should be well named,
-      clearly structured, informatively commented), also for sharing workflows and results
-     not suited for every task
 
-Scripts in general
-     Every script should provide usage information, no matter how short it is (can be a brief
-      comment section in the beginning)
-     Scripts should break immediately if something is wrong: check data consistency as often as
-      possible (assertions in Python), e.g. input arguments, non-empty files, plausible results, …
-     Adopt iterative and incremental development: start with a minimalistic working version of
-      the script, keep changes small, test frequently
-     Write modular code, i.e., short, single-purpose functions/scripts with clearly defined inputs
-      and outputs -> readable, reusable, and testable; avoid “swiss-army-knife” scripts
-     Provide simple examples/test data to make sure that the script works as expected
-     Avoid code duplication (copying/pasting code is usually a bad sign)
-     Look for well-maintained libraries that help you do what you’re trying to do
-     Follow best practices like naming conventions (e.g. https://realpython.com/python-pep8/)
 
-Code development and version control
-     A version control system stores snapshots of a project’s files in a repository
-     Provides backup, keeps track of changes (=versions with tags), allows code modifications
-      (branches) without breaking existing functionality, facilitates conflict resolution
-     If you collaborate with others, you need to use version control
-     If you work on a larger codebase, you should use version control
-Collaborating on computational projects
-     Decide early on methods for communication/information exchange
-     Use a version control system (Git is a good option) to manage changes to a project
-          o Raw data and intermediate files need not be put under version control
-          o Large data or result files should not be put under version control
-     Keep changes small (= group of edits that you might want to undo in one step)
-     Share changes frequently (synchronize your progress with the progress of others)
-     Use an additional checklist (log file) for keeping track of and sharing changes to the project
-     Store each project in a folder that is daily mirrored to Dropbox or a remote repository such
-      as GitHub (and/or use some automated daily backup system)
+  <link crossorigin="anonymous" media="all" integrity="sha512-iwkZZWcsyMNnn/6c9v2ab3e7h4ZiFTOEZ9R6jj75bN9JzYuYjQ/AC7ufEcfpqd4GcTwcM+p2OhPzRSyeKL7NMQ==" rel="stylesheet" href="https://github.githubassets.com/assets/frameworks-f331a618befc2bf99be870c538f9ac95.css" />
+  
+    <link crossorigin="anonymous" media="all" integrity="sha512-aNG5krDHN2cRz9S1IQCny05lxUZoekqj6RxbbBrsCxSBXMJ5XNnom3bLiUcdqjsgxxuiQLjZV5+T8LgWI0Lg1g==" rel="stylesheet" href="https://github.githubassets.com/assets/github-1f58107c84b3cf18f5c650fecfa9715a.css" />
+    
+    
+    
+    
 
-Basic data management
-     Save raw data in a separate directory (/data) and make it read-only
-     Do not duplicate (data) files unless necessary, use symbolic links instead
-     Keep large files compressed (gzip)
-     Back up crucial files like raw data files, scripts and notes/documentation in at least two
-      spatially distinct locations (an external drive next to the computer is a bad idea, e.g. in case
-      of fire/theft/etc)
-     Make data analysis-friendly: convert to open, non-proprietary, standardized formats that
-      can be easily re-used later; modify cryptic variable names and file names to make them
-      more informative; tidy up the data (http://garrettgman.github.io/tidying/)
-     Directory names:
-           o chronological: name is a date, e.g. 2018_03_15 (starts with year for better sorting),
-               makes sense if you have many experiments of the same type differing by date
-           o logical: name is an abstraction of the content, e.g. assembly_firsttry
-           o “semi-logical” (often best option): name starts with number or date -> reflects a
-               sequence of steps (e.g. 01_filter, 02_parse, 03_visualization, etc.)
-     Name files to reflect their function or content in chronological order, e.g.
-      dna_sample1.trimmed.filtered.assembled.filtered.fasta (you can
-      immediately see that the data was filtered before and after the assembly)
-     Temporary file names should be distinct from permanent file names, so you know which
-      files are incomplete or irrelevant (you can rename files in a subsequent step)
-     Delete temporary files, especially if they can be easily recalculated (time/storage tradeoff)
-     Delete experimental files after trying something out – keep your workspace clean; do it
-      immediately after completion, it will be much harder later on
-     Archive inactive projects in a separate directory, packed as .tar.gz archives
-     Share your data using scientific online repositories
+  <meta name="viewport" content="width=device-width">
+  
+  <title>AA_frequencies_sec_structure/README.md at master · simsal35/AA_frequencies_sec_structure</title>
+    <meta name="description" content="Contribute to simsal35/AA_frequencies_sec_structure development by creating an account on GitHub.">
+    <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
+  <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
+  <meta property="fb:app_id" content="1401488693436528">
 
-Basic project management
-     Define project goals
-     Outline the milestones necessary to reach the goals – each milestone should correspond to
-      results (deliverables) that can be presented in form of a progress report/short presentation
-     Outline the steps (work packages) required to reach each milestone
-     Assess the time and resources required to complete each work package
-          o Each work package should be disassembled into single steps, as fine-grained as
-               possible (remember the algorithmic exercise about planning a city trip)
-            o Think about possible difficulties and how you can overcome them (risk analysis)
-       Reserve time for work packages in a (online) calendar in advance
-       Use the reserved time to complete the work packages
-            o introduce changes into the planning if required
-       The current project status should be transparent to your PI and your collaborators
+    <meta name="twitter:image:src" content="https://avatars1.githubusercontent.com/u/49247890?s=400&amp;v=4" /><meta name="twitter:site" content="@github" /><meta name="twitter:card" content="summary" /><meta name="twitter:title" content="simsal35/AA_frequencies_sec_structure" /><meta name="twitter:description" content="Contribute to simsal35/AA_frequencies_sec_structure development by creating an account on GitHub." />
+    <meta property="og:image" content="https://avatars1.githubusercontent.com/u/49247890?s=400&amp;v=4" /><meta property="og:site_name" content="GitHub" /><meta property="og:type" content="object" /><meta property="og:title" content="simsal35/AA_frequencies_sec_structure" /><meta property="og:url" content="https://github.com/simsal35/AA_frequencies_sec_structure" /><meta property="og:description" content="Contribute to simsal35/AA_frequencies_sec_structure development by creating an account on GitHub." />
 
-Basic manuscript management
-       Agree with all authors on the workflow before the writing starts
-       Keep a single master document online which allows to track changes and is available to all
-        co-authors, using a platform such as Google Docs
-       Alternatively, keep the manuscript in plain text format under version control, using LaTeX or
-        Markdown
-       Keep supplementary materials in separate text-format files for easier re-use by others
+  <link rel="assets" href="https://github.githubassets.com/">
+  <link rel="web-socket" href="wss://live.github.com/_sockets/VjI6MzkxMTAxOTQxOjk1NWNkMjIzMTBjY2ZmNDNiYzU4MjM1NzY1NTBlZGRlM2JjMTg4YWQxNTYxYzVhNjM3YWZkZjY3MjRhYzg0Yjg=--9c2f6a918e86ae8a8d84f23d5650788110fac4db">
+  <meta name="pjax-timeout" content="1000">
+  <link rel="sudo-modal" href="/sessions/sudo_modal">
+  <meta name="request-id" content="5856:19F12:12A21D4:1C6A41C:5CC16978" data-pjax-transient>
 
-Beware of:
-       Manual modifications of output files
-            o Workflow becomes non-reproducible
-            o You WILL forget later what you did
-       Messy workspace
-            o with lots of files of unclear importance lying around, taking up space and making you
-                nervous (might sound funny, but this is exactly what happens)
-       Poorly tested/unjustified analysis steps
-            o Using non-default parameters, unpublished tools or untested workflows without
-                very good reason -> this will be much, much harder to publish later
-       “Overfitting”
-            o Fine-tuning the workflow (e.g. tool parameters) to achieve the “desired” results
-            o The results may become slightly better, but less reproducible and harder to publish
-       Confirmation bias (human tendency to handle information in a way that confirms one's
-        preexisting beliefs or hypotheses)
-            o Don’t “adapt” the analysis to your ideas about what the results should be; this might
-                give seemingly better results short-term, but will cause more problems long-term
-            o This is not the same as optimizing the workflow by identifying the tools/approaches
-                best-suited for your data to obtain good results 
-            o Rule of thumb: A good result is often stable towards changes in parameters and
-                even analysis methods. If it is not, it might not be a reliable result.
 
-Links
-       Software/Data Carpentry: https://software-carpentry.org/, https://datacarpentry.org/
-       Noble, William Stafford. 2009. “A Quick Guide to Organizing Computational Biology Projects.” PLOS
-        Computational Biology 5 (7): e1000424. https://doi.org/10.1371/journal.pcbi.1000424.
-       Wilson, Greg et al. 2017. “Good Enough Practices in Scientific Computing.” PLOS Computational
-        Biology 13 (6): e1005510. https://doi.org/10.1371/journal.pcbi.1005510.
-
+  
+
+  <meta name="selected-link" value="repo_source" data-pjax-transient>
+
+      <meta name="google-site-verification" content="KT5gs8h0wvaagLKAVWq8bbeNwnZZK1r1XQysX3xurLU">
+    <meta name="google-site-verification" content="ZzhVyEFwb7w3e0-uOTltm8Jsck2F5StVihD0exw2fsA">
+    <meta name="google-site-verification" content="GXs5KoUUkNCoaAZn7wPN-t01Pywp9M3sEjnt_3_ZWPc">
+
+  <meta name="octolytics-host" content="collector.githubapp.com" /><meta name="octolytics-app-id" content="github" /><meta name="octolytics-event-url" content="https://collector.githubapp.com/github-external/browser_event" /><meta name="octolytics-dimension-request_id" content="5856:19F12:12A21D4:1C6A41C:5CC16978" /><meta name="octolytics-dimension-region_edge" content="ams" /><meta name="octolytics-dimension-region_render" content="iad" /><meta name="octolytics-actor-id" content="49247890" /><meta name="octolytics-actor-login" content="simsal35" /><meta name="octolytics-actor-hash" content="3cedeac26dec439fd304747a51387eb45452d6dbec3d8d3495a6011b8f27dd9b" />
+<meta name="analytics-location" content="/&lt;user-name&gt;/&lt;repo-name&gt;/blob/show" data-pjax-transient="true" />
+
+
+
+    <meta name="google-analytics" content="UA-3769691-2">
+
+  <meta class="js-ga-set" name="userId" content="80db243c2a790f5e3bee308a0e597bf1">
+
+<meta class="js-ga-set" name="dimension1" content="Logged In">
+
+
+
+  
+
+      <meta name="hostname" content="github.com">
+    <meta name="user-login" content="simsal35">
+
+      <meta name="expected-hostname" content="github.com">
+    <meta name="js-proxy-site-detection-payload" content="NjRiYzE2MDY5ZTBhZjgxNDEwMWVlNGIyNzY3MjI2ZjYzZDBiMDQ4MzkwMWJjNGE1MWZiYWRkOTRmZDJlYjZkNnx7InJlbW90ZV9hZGRyZXNzIjoiMjEzLjE2Mi43Mi4yMDIiLCJyZXF1ZXN0X2lkIjoiNTg1NjoxOUYxMjoxMkEyMUQ0OjFDNkE0MUM6NUNDMTY5NzgiLCJ0aW1lc3RhbXAiOjE1NTYxNzkzMjYsImhvc3QiOiJnaXRodWIuY29tIn0=">
+
+    <meta name="enabled-features" content="UNIVERSE_BANNER,MARKETPLACE_INVOICED_BILLING,MARKETPLACE_SOCIAL_PROOF_CUSTOMERS,MARKETPLACE_TRENDING_SOCIAL_PROOF,MARKETPLACE_RECOMMENDATIONS,NOTIFY_ON_BLOCK,RELATED_ISSUES">
+
+  <meta name="html-safe-nonce" content="925c66ce2b51905c8c62dc6d238cf9fd3b07e6c7">
+
+  <meta http-equiv="x-pjax-version" content="0b7bc91b47ee6252df0556dc86a077c6">
+  
+
+      <link href="https://github.com/simsal35/AA_frequencies_sec_structure/commits/master.atom" rel="alternate" title="Recent Commits to AA_frequencies_sec_structure:master" type="application/atom+xml">
+
+  <meta name="go-import" content="github.com/simsal35/AA_frequencies_sec_structure git https://github.com/simsal35/AA_frequencies_sec_structure.git">
+
+  <meta name="octolytics-dimension-user_id" content="49247890" /><meta name="octolytics-dimension-user_login" content="simsal35" /><meta name="octolytics-dimension-repository_id" content="179801507" /><meta name="octolytics-dimension-repository_nwo" content="simsal35/AA_frequencies_sec_structure" /><meta name="octolytics-dimension-repository_public" content="true" /><meta name="octolytics-dimension-repository_is_fork" content="true" /><meta name="octolytics-dimension-repository_parent_id" content="172918910" /><meta name="octolytics-dimension-repository_parent_nwo" content="biodatasciencetulln/AA_frequencies_sec_structure" /><meta name="octolytics-dimension-repository_network_root_id" content="172918910" /><meta name="octolytics-dimension-repository_network_root_nwo" content="biodatasciencetulln/AA_frequencies_sec_structure" /><meta name="octolytics-dimension-repository_explore_github_marketplace_ci_cta_shown" content="true" />
+
+
+    <link rel="canonical" href="https://github.com/simsal35/AA_frequencies_sec_structure/blob/master/README.md" data-pjax-transient>
+
+
+  <meta name="browser-stats-url" content="https://api.github.com/_private/browser/stats">
+
+  <meta name="browser-errors-url" content="https://api.github.com/_private/browser/errors">
+
+  <link rel="mask-icon" href="https://github.githubassets.com/pinned-octocat.svg" color="#000000">
+  <link rel="icon" type="image/x-icon" class="js-site-favicon" href="https://github.githubassets.com/favicon.ico">
+
+<meta name="theme-color" content="#1e2327">
+
+
+
+
+
+  <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials">
+
+  <script type="text/javascript" src="https://ff.kis.v2.scr.kaspersky-labs.com/697E0E3B-5958-CB4F-94E8-C7FDDE28102C/main.js" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://ff.kis.v2.scr.kaspersky-labs.com/73CBE998-2F42-574D-9CC0-BD0BA64EEE91/abn/main.css"/></head>
+
+  <body class="logged-in env-production page-responsive min-width-0 page-blob">
+    
+
+  <div class="position-relative js-header-wrapper ">
+    <a href="#start-of-content" tabindex="1" class="p-3 bg-blue text-white show-on-focus js-skip-to-content">Skip to content</a>
+    <div id="js-pjax-loader-bar" class="pjax-loader-bar"><div class="progress"></div></div>
+
+    
+    
+    
+
+
+          <header class="Header js-details-container Details flex-wrap flex-lg-nowrap p-responsive" role="banner">
+
+    <div class="Header-item d-none d-lg-flex">
+      <a class="Header-link" href="https://github.com/" data-hotkey="g d" aria-label="Homepage" data-ga-click="Header, go to dashboard, icon:logo">
+  <svg class="octicon octicon-mark-github v-align-middle" height="32" viewBox="0 0 16 16" version="1.1" width="32" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+</a>
+
+    </div>
+
+    <div class="Header-item d-lg-none">
+      <button class="Header-link btn-link js-details-target" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <svg height="24" class="octicon octicon-three-bars" viewBox="0 0 12 16" version="1.1" width="18" aria-hidden="true"><path fill-rule="evenodd" d="M11.41 9H.59C0 9 0 8.59 0 8c0-.59 0-1 .59-1H11.4c.59 0 .59.41.59 1 0 .59 0 1-.59 1h.01zm0-4H.59C0 5 0 4.59 0 4c0-.59 0-1 .59-1H11.4c.59 0 .59.41.59 1 0 .59 0 1-.59 1h.01zM.59 11H11.4c.59 0 .59.41.59 1 0 .59 0 1-.59 1H.59C0 13 0 12.59 0 12c0-.59 0-1 .59-1z"/></svg>
+      </button>
+    </div>
+
+    <div class="Header-item Header-item--full flex-column flex-lg-row width-full flex-order-2 flex-lg-order-none mr-0 mr-lg-3 mt-3 mt-lg-0 Details-content--hidden">
+        <div class="header-search flex-self-stretch flex-lg-self-auto mr-0 mr-lg-3 mb-3 mb-lg-0 scoped-search site-scoped-search js-site-search position-relative js-jump-to"
+  role="combobox"
+  aria-owns="jump-to-results"
+  aria-label="Search or jump to"
+  aria-haspopup="listbox"
+  aria-expanded="false"
+>
+  <div class="position-relative">
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="js-site-search-form" role="search" aria-label="Site" data-scope-type="Repository" data-scope-id="179801507" data-scoped-search-url="/simsal35/AA_frequencies_sec_structure/search" data-unscoped-search-url="/search" action="/simsal35/AA_frequencies_sec_structure/search" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+      <label class="form-control input-sm header-search-wrapper p-0 header-search-wrapper-jump-to position-relative d-flex flex-justify-between flex-items-center js-chromeless-input-container">
+        <input type="text"
+          class="form-control input-sm header-search-input jump-to-field js-jump-to-field js-site-search-focus js-site-search-field is-clearable"
+          data-hotkey="s,/"
+          name="q"
+          value=""
+          placeholder="Search or jump to…"
+          data-unscoped-placeholder="Search or jump to…"
+          data-scoped-placeholder="Search or jump to…"
+          autocapitalize="off"
+          aria-autocomplete="list"
+          aria-controls="jump-to-results"
+          aria-label="Search or jump to…"
+          data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations#csrf-token=F8TIL3VeNvPjZkvctFW/cAHlmsnWgMdDMBd8YidDyd6UN63EcQiNSam7yE5EWUz2OwBY1CAxUEVomsH4/rrlzw=="
+          spellcheck="false"
+          autocomplete="off"
+          >
+          <input type="hidden" class="js-site-search-type-field" name="type" >
+            <img src="https://github.githubassets.com/images/search-key-slash.svg" alt="" class="mr-2 header-search-key-slash">
+
+            <div class="Box position-absolute overflow-hidden d-none jump-to-suggestions js-jump-to-suggestions-container">
+              
+<ul class="d-none js-jump-to-suggestions-template-container">
+  
+
+<li class="d-flex flex-justify-start flex-items-center p-0 f5 navigation-item js-navigation-item js-jump-to-suggestion" role="option">
+  <a tabindex="-1" class="no-underline d-flex flex-auto flex-items-center jump-to-suggestions-path js-jump-to-suggestion-path js-navigation-open p-2" href="">
+    <div class="jump-to-octicon js-jump-to-octicon flex-shrink-0 mr-2 text-center d-none">
+      <svg height="16" width="16" class="octicon octicon-repo flex-shrink-0 js-jump-to-octicon-repo d-none" title="Repository" aria-label="Repository" viewBox="0 0 12 16" version="1.1" role="img"><path fill-rule="evenodd" d="M4 9H3V8h1v1zm0-3H3v1h1V6zm0-2H3v1h1V4zm0-2H3v1h1V2zm8-1v12c0 .55-.45 1-1 1H6v2l-1.5-1.5L3 16v-2H1c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1h10c.55 0 1 .45 1 1zm-1 10H1v2h2v-1h3v1h5v-2zm0-10H2v9h9V1z"/></svg>
+      <svg height="16" width="16" class="octicon octicon-project flex-shrink-0 js-jump-to-octicon-project d-none" title="Project" aria-label="Project" viewBox="0 0 15 16" version="1.1" role="img"><path fill-rule="evenodd" d="M10 12h3V2h-3v10zm-4-2h3V2H6v8zm-4 4h3V2H2v12zm-1 1h13V1H1v14zM14 0H1a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1z"/></svg>
+      <svg height="16" width="16" class="octicon octicon-search flex-shrink-0 js-jump-to-octicon-search d-none" title="Search" aria-label="Search" viewBox="0 0 16 16" version="1.1" role="img"><path fill-rule="evenodd" d="M15.7 13.3l-3.81-3.83A5.93 5.93 0 0 0 13 6c0-3.31-2.69-6-6-6S1 2.69 1 6s2.69 6 6 6c1.3 0 2.48-.41 3.47-1.11l3.83 3.81c.19.2.45.3.7.3.25 0 .52-.09.7-.3a.996.996 0 0 0 0-1.41v.01zM7 10.7c-2.59 0-4.7-2.11-4.7-4.7 0-2.59 2.11-4.7 4.7-4.7 2.59 0 4.7 2.11 4.7 4.7 0 2.59-2.11 4.7-4.7 4.7z"/></svg>
+    </div>
+
+    <img class="avatar mr-2 flex-shrink-0 js-jump-to-suggestion-avatar d-none" alt="" aria-label="Team" src="" width="28" height="28">
+
+    <div class="jump-to-suggestion-name js-jump-to-suggestion-name flex-auto overflow-hidden text-left no-wrap css-truncate css-truncate-target">
+    </div>
+
+    <div class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none js-jump-to-badge-search">
+      <span class="js-jump-to-badge-search-text-default d-none" aria-label="in this repository">
+        In this repository
+      </span>
+      <span class="js-jump-to-badge-search-text-global d-none" aria-label="in all of GitHub">
+        All GitHub
+      </span>
+      <span aria-hidden="true" class="d-inline-block ml-1 v-align-middle">↵</span>
+    </div>
+
+    <div aria-hidden="true" class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none d-on-nav-focus js-jump-to-badge-jump">
+      Jump to
+      <span class="d-inline-block ml-1 v-align-middle">↵</span>
+    </div>
+  </a>
+</li>
+
+</ul>
+
+<ul class="d-none js-jump-to-no-results-template-container">
+  <li class="d-flex flex-justify-center flex-items-center f5 d-none js-jump-to-suggestion p-2">
+    <span class="text-gray">No suggested jump to results</span>
+  </li>
+</ul>
+
+<ul id="jump-to-results" role="listbox" class="p-0 m-0 js-navigation-container jump-to-suggestions-results-container js-jump-to-suggestions-results-container">
+  
+
+<li class="d-flex flex-justify-start flex-items-center p-0 f5 navigation-item js-navigation-item js-jump-to-scoped-search d-none" role="option">
+  <a tabindex="-1" class="no-underline d-flex flex-auto flex-items-center jump-to-suggestions-path js-jump-to-suggestion-path js-navigation-open p-2" href="">
+    <div class="jump-to-octicon js-jump-to-octicon flex-shrink-0 mr-2 text-center d-none">
+      <svg height="16" width="16" class="octicon octicon-repo flex-shrink-0 js-jump-to-octicon-repo d-none" title="Repository" aria-label="Repository" viewBox="0 0 12 16" version="1.1" role="img"><path fill-rule="evenodd" d="M4 9H3V8h1v1zm0-3H3v1h1V6zm0-2H3v1h1V4zm0-2H3v1h1V2zm8-1v12c0 .55-.45 1-1 1H6v2l-1.5-1.5L3 16v-2H1c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1h10c.55 0 1 .45 1 1zm-1 10H1v2h2v-1h3v1h5v-2zm0-10H2v9h9V1z"/></svg>
+      <svg height="16" width="16" class="octicon octicon-project flex-shrink-0 js-jump-to-octicon-project d-none" title="Project" aria-label="Project" viewBox="0 0 15 16" version="1.1" role="img"><path fill-rule="evenodd" d="M10 12h3V2h-3v10zm-4-2h3V2H6v8zm-4 4h3V2H2v12zm-1 1h13V1H1v14zM14 0H1a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1z"/></svg>
+      <svg height="16" width="16" class="octicon octicon-search flex-shrink-0 js-jump-to-octicon-search d-none" title="Search" aria-label="Search" viewBox="0 0 16 16" version="1.1" role="img"><path fill-rule="evenodd" d="M15.7 13.3l-3.81-3.83A5.93 5.93 0 0 0 13 6c0-3.31-2.69-6-6-6S1 2.69 1 6s2.69 6 6 6c1.3 0 2.48-.41 3.47-1.11l3.83 3.81c.19.2.45.3.7.3.25 0 .52-.09.7-.3a.996.996 0 0 0 0-1.41v.01zM7 10.7c-2.59 0-4.7-2.11-4.7-4.7 0-2.59 2.11-4.7 4.7-4.7 2.59 0 4.7 2.11 4.7 4.7 0 2.59-2.11 4.7-4.7 4.7z"/></svg>
+    </div>
+
+    <img class="avatar mr-2 flex-shrink-0 js-jump-to-suggestion-avatar d-none" alt="" aria-label="Team" src="" width="28" height="28">
+
+    <div class="jump-to-suggestion-name js-jump-to-suggestion-name flex-auto overflow-hidden text-left no-wrap css-truncate css-truncate-target">
+    </div>
+
+    <div class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none js-jump-to-badge-search">
+      <span class="js-jump-to-badge-search-text-default d-none" aria-label="in this repository">
+        In this repository
+      </span>
+      <span class="js-jump-to-badge-search-text-global d-none" aria-label="in all of GitHub">
+        All GitHub
+      </span>
+      <span aria-hidden="true" class="d-inline-block ml-1 v-align-middle">↵</span>
+    </div>
+
+    <div aria-hidden="true" class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none d-on-nav-focus js-jump-to-badge-jump">
+      Jump to
+      <span class="d-inline-block ml-1 v-align-middle">↵</span>
+    </div>
+  </a>
+</li>
+
+  
+
+<li class="d-flex flex-justify-start flex-items-center p-0 f5 navigation-item js-navigation-item js-jump-to-global-search d-none" role="option">
+  <a tabindex="-1" class="no-underline d-flex flex-auto flex-items-center jump-to-suggestions-path js-jump-to-suggestion-path js-navigation-open p-2" href="">
+    <div class="jump-to-octicon js-jump-to-octicon flex-shrink-0 mr-2 text-center d-none">
+      <svg height="16" width="16" class="octicon octicon-repo flex-shrink-0 js-jump-to-octicon-repo d-none" title="Repository" aria-label="Repository" viewBox="0 0 12 16" version="1.1" role="img"><path fill-rule="evenodd" d="M4 9H3V8h1v1zm0-3H3v1h1V6zm0-2H3v1h1V4zm0-2H3v1h1V2zm8-1v12c0 .55-.45 1-1 1H6v2l-1.5-1.5L3 16v-2H1c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1h10c.55 0 1 .45 1 1zm-1 10H1v2h2v-1h3v1h5v-2zm0-10H2v9h9V1z"/></svg>
+      <svg height="16" width="16" class="octicon octicon-project flex-shrink-0 js-jump-to-octicon-project d-none" title="Project" aria-label="Project" viewBox="0 0 15 16" version="1.1" role="img"><path fill-rule="evenodd" d="M10 12h3V2h-3v10zm-4-2h3V2H6v8zm-4 4h3V2H2v12zm-1 1h13V1H1v14zM14 0H1a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1z"/></svg>
+      <svg height="16" width="16" class="octicon octicon-search flex-shrink-0 js-jump-to-octicon-search d-none" title="Search" aria-label="Search" viewBox="0 0 16 16" version="1.1" role="img"><path fill-rule="evenodd" d="M15.7 13.3l-3.81-3.83A5.93 5.93 0 0 0 13 6c0-3.31-2.69-6-6-6S1 2.69 1 6s2.69 6 6 6c1.3 0 2.48-.41 3.47-1.11l3.83 3.81c.19.2.45.3.7.3.25 0 .52-.09.7-.3a.996.996 0 0 0 0-1.41v.01zM7 10.7c-2.59 0-4.7-2.11-4.7-4.7 0-2.59 2.11-4.7 4.7-4.7 2.59 0 4.7 2.11 4.7 4.7 0 2.59-2.11 4.7-4.7 4.7z"/></svg>
+    </div>
+
+    <img class="avatar mr-2 flex-shrink-0 js-jump-to-suggestion-avatar d-none" alt="" aria-label="Team" src="" width="28" height="28">
+
+    <div class="jump-to-suggestion-name js-jump-to-suggestion-name flex-auto overflow-hidden text-left no-wrap css-truncate css-truncate-target">
+    </div>
+
+    <div class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none js-jump-to-badge-search">
+      <span class="js-jump-to-badge-search-text-default d-none" aria-label="in this repository">
+        In this repository
+      </span>
+      <span class="js-jump-to-badge-search-text-global d-none" aria-label="in all of GitHub">
+        All GitHub
+      </span>
+      <span aria-hidden="true" class="d-inline-block ml-1 v-align-middle">↵</span>
+    </div>
+
+    <div aria-hidden="true" class="border rounded-1 flex-shrink-0 bg-gray px-1 text-gray-light ml-1 f6 d-none d-on-nav-focus js-jump-to-badge-jump">
+      Jump to
+      <span class="d-inline-block ml-1 v-align-middle">↵</span>
+    </div>
+  </a>
+</li>
+
+
+    <li class="d-flex flex-justify-center flex-items-center p-0 f5 js-jump-to-suggestion">
+      <img src="https://github.githubassets.com/images/spinners/octocat-spinner-128.gif" alt="Octocat Spinner Icon" class="m-2" width="28">
+    </li>
+</ul>
+
+            </div>
+      </label>
+</form>  </div>
+</div>
+
+
+      <nav class="d-flex flex-column flex-lg-row flex-self-stretch flex-lg-self-auto" aria-label="Global">
+    <a class="Header-link d-block d-lg-none py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15" data-ga-click="Header, click, Nav menu - item:dashboard:user" aria-label="Dashboard" href="/dashboard">
+      Dashboard
+</a>
+  <a class="js-selected-navigation-item Header-link  mr-0 mr-lg-3 py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15" data-hotkey="g p" data-ga-click="Header, click, Nav menu - item:pulls context:user" aria-label="Pull requests you created" data-selected-links="/pulls /pulls/assigned /pulls/mentioned /pulls" href="/pulls">
+    Pull requests
+</a>
+  <a class="js-selected-navigation-item Header-link  mr-0 mr-lg-3 py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15" data-hotkey="g i" data-ga-click="Header, click, Nav menu - item:issues context:user" aria-label="Issues you created" data-selected-links="/issues /issues/assigned /issues/mentioned /issues" href="/issues">
+    Issues
+</a>
+    <a class="js-selected-navigation-item Header-link  mr-0 mr-lg-3 py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15" data-ga-click="Header, click, Nav menu - item:marketplace context:user" data-octo-click="marketplace_click" data-octo-dimensions="location:nav_bar" data-selected-links=" /marketplace" href="/marketplace">
+      Marketplace
+</a>      
+
+  <a class="js-selected-navigation-item Header-link  mr-0 mr-lg-3 py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15" data-ga-click="Header, click, Nav menu - item:explore" data-selected-links="/explore /trending /trending/developers /integrations /integrations/feature/code /integrations/feature/collaborate /integrations/feature/ship showcases showcases_search showcases_landing /explore" href="/explore">
+    Explore
+</a>
+    <a class="Header-link d-block d-lg-none mr-0 mr-lg-3 py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15" aria-label="View profile and more" aria-expanded="false" aria-haspopup="false" href="https://github.com/simsal35">
+      <img class="avatar" src="https://avatars1.githubusercontent.com/u/49247890?s=40&amp;v=4" width="20" height="20" alt="@simsal35" />
+      simsal35
+</a>
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form action="/logout" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="u+mcwciFUyBcimkSTgZMOLXV5VOK4DRJgCSsnYTkoEZEeCeTS5Hh7HuaghKWvG9zBqjOkmsLLrhPxfg5BcoTxA==" />
+      <button type="submit" class="Header-link mr-0 mr-lg-3 py-2 py-lg-0 border-top border-lg-top-0 border-white-fade-15 d-lg-none btn-link d-block width-full text-left" data-ga-click="Header, sign out, icon:logout" style="padding-left: 2px;">
+        <svg class="octicon octicon-sign-out v-align-middle" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 9V7H8V5h4V3l4 3-4 3zm-2 3H6V3L2 1h8v3h1V1c0-.55-.45-1-1-1H1C.45 0 0 .45 0 1v11.38c0 .39.22.73.55.91L6 16.01V13h4c.55 0 1-.45 1-1V8h-1v4z"/></svg>
+        Sign out
+      </button>
+</form></nav>
+
+    </div>
+
+    <div class="Header-item Header-item--full flex-justify-center d-lg-none position-relative">
+      <div class="css-truncate css-truncate-target width-fit position-absolute left-0 right-0 text-center">
+              <svg class="octicon octicon-repo-forked" viewBox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1a1.993 1.993 0 0 0-1 3.72V6L5 8 3 6V4.72A1.993 1.993 0 0 0 2 1a1.993 1.993 0 0 0-1 3.72V6.5l3 3v1.78A1.993 1.993 0 0 0 5 15a1.993 1.993 0 0 0 1-3.72V9.5l3-3V4.72A1.993 1.993 0 0 0 8 1zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3 10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3-10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"/></svg>
+    <a class="Header-link" href="/simsal35">simsal35</a>
+    /
+    <a class="Header-link" href="/simsal35/AA_frequencies_sec_structure">AA_frequencies_sec_structure</a>
+
+</div>
+    </div>
+
+    <div class="Header-item position-relative d-none d-lg-flex">
+      
+
+    </div>
+
+    <div class="Header-item mr-0 mr-lg-3 flex-order-1 flex-lg-order-none">
+      
+    <a aria-label="You have no unread notifications" class="Header-link notification-indicator position-relative tooltipped tooltipped-s js-socket-channel js-notification-indicator" data-hotkey="g n" data-ga-click="Header, go to notifications, icon:read" data-channel="notification-changed:49247890" href="/notifications">
+        <span class="mail-status "></span>
+        <svg class="octicon octicon-bell" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14 12v1H0v-1l.73-.58c.77-.77.81-2.55 1.19-4.42C2.69 3.23 6 2 6 2c0-.55.45-1 1-1s1 .45 1 1c0 0 3.39 1.23 4.16 5 .38 1.88.42 3.66 1.19 4.42l.66.58H14zm-7 4c1.11 0 2-.89 2-2H5c0 1.11.89 2 2 2z"/></svg>
+</a>
+    </div>
+
+
+    <div class="Header-item position-relative d-none d-lg-flex">
+      <details class="details-overlay details-reset">
+  <summary class="Header-link"
+      aria-label="Create new…"
+      data-ga-click="Header, create new, icon:add">
+    <svg class="octicon octicon-plus" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 9H7v5H5V9H0V7h5V2h2v5h5v2z"/></svg> <span class="dropdown-caret"></span>
+  </summary>
+  <details-menu class="dropdown-menu dropdown-menu-sw">
+    
+<a role="menuitem" class="dropdown-item" href="/new" data-ga-click="Header, create new repository">
+  New repository
+</a>
+
+  <a role="menuitem" class="dropdown-item" href="/new/import" data-ga-click="Header, import a repository">
+    Import repository
+  </a>
+
+<a role="menuitem" class="dropdown-item" href="https://gist.github.com/" data-ga-click="Header, create new gist">
+  New gist
+</a>
+
+  <a role="menuitem" class="dropdown-item" href="/organizations/new" data-ga-click="Header, create new organization">
+    New organization
+  </a>
+
+
+
+  <a role="menuitem" class="dropdown-item" href="/new/project" data-ga-click="Header, create new project">
+    New project
+  </a>
+
+  </details-menu>
+</details>
+
+    </div>
+
+    <div class="Header-item position-relative mr-0 d-none d-lg-flex">
+      
+<details class="details-overlay details-reset">
+  <summary class="Header-link"
+    aria-label="View profile and more"
+    data-ga-click="Header, show menu, icon:avatar">
+    <img alt="@simsal35" class="avatar" src="https://avatars1.githubusercontent.com/u/49247890?s=40&amp;v=4" height="20" width="20">
+    <span class="dropdown-caret"></span>
+  </summary>
+  <details-menu class="dropdown-menu dropdown-menu-sw mt-2" style="width: 180px">
+    <div class="header-nav-current-user css-truncate"><a role="menuitem" class="no-underline user-profile-link px-3 pt-2 pb-2 mb-n2 mt-n1 d-block" href="/simsal35" data-ga-click="Header, go to profile, text:Signed in as">Signed in as <strong class="css-truncate-target">simsal35</strong></a></div>
+    <div role="none" class="dropdown-divider"></div>
+
+      <div class="pl-3 pr-5 f6 user-status-container js-user-status-context pb-1" data-url="/users/status?compact=1&amp;link_mentions=0&amp;truncate=1">
+        
+<div class="js-user-status-container  user-status-compact rounded-1 px-2 py-1 mt-2 border" data-team-hovercards-enabled>
+  <details class="js-user-status-details details-reset details-overlay details-overlay-dark">
+    <summary class="btn-link no-underline js-toggle-user-status-edit toggle-user-status-edit width-full d-flex link-gray " aria-haspopup="dialog" role="menuitem" data-hydro-click="{&quot;event_type&quot;:&quot;user_profile.click&quot;,&quot;payload&quot;:{&quot;profile_user_id&quot;:49247890,&quot;target&quot;:&quot;EDIT_USER_STATUS&quot;,&quot;user_id&quot;:49247890,&quot;client_id&quot;:&quot;765411270.1554628069&quot;,&quot;originating_request_id&quot;:&quot;5856:19F12:12A21D4:1C6A41C:5CC16978&quot;,&quot;originating_url&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure/blob/master/README.md&quot;,&quot;referrer&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure&quot;}}" data-hydro-click-hmac="1eca493810e0a930fb6fcab17f7ce50a0018991ae8a447c534c354ba6eaa13e9">
+      <div class="f6 d-inline-block v-align-middle user-status-emoji-only-header circle pr-2 lh-condensed user-status-header " style="max-width: 29px">
+        <div class="user-status-emoji-container flex-shrink-0 mr-1 mt-1 lh-condensed-ultra v-align-bottom" style="">
+          <svg class="octicon octicon-smiley" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm4.81 12.81a6.72 6.72 0 0 1-2.17 1.45c-.83.36-1.72.53-2.64.53-.92 0-1.81-.17-2.64-.53-.81-.34-1.55-.83-2.17-1.45a6.773 6.773 0 0 1-1.45-2.17A6.59 6.59 0 0 1 1.21 8c0-.92.17-1.81.53-2.64.34-.81.83-1.55 1.45-2.17.62-.62 1.36-1.11 2.17-1.45A6.59 6.59 0 0 1 8 1.21c.92 0 1.81.17 2.64.53.81.34 1.55.83 2.17 1.45.62.62 1.11 1.36 1.45 2.17.36.83.53 1.72.53 2.64 0 .92-.17 1.81-.53 2.64-.34.81-.83 1.55-1.45 2.17zM4 6.8v-.59c0-.66.53-1.19 1.2-1.19h.59c.66 0 1.19.53 1.19 1.19v.59c0 .67-.53 1.2-1.19 1.2H5.2C4.53 8 4 7.47 4 6.8zm5 0v-.59c0-.66.53-1.19 1.2-1.19h.59c.66 0 1.19.53 1.19 1.19v.59c0 .67-.53 1.2-1.19 1.2h-.59C9.53 8 9 7.47 9 6.8zm4 3.2c-.72 1.88-2.91 3-5 3s-4.28-1.13-5-3c-.14-.39.23-1 .66-1h8.59c.41 0 .89.61.75 1z"/></svg>
+        </div>
+      </div>
+      <div class="
+        d-inline-block v-align-middle
+        
+        
+         css-truncate css-truncate-target 
+         user-status-message-wrapper f6"
+        style="line-height: 20px;">
+        <div class="d-inline-block text-gray-dark v-align-text-top">
+            <span class="text-gray ml-2">Set status</span>
+        </div>
+      </div>
+</summary>    <details-dialog class="details-dialog rounded-1 anim-fade-in fast Box Box--overlay" role="dialog" tabindex="-1">
+      <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="position-relative flex-auto js-user-status-form" action="/users/status?compact=1&amp;link_mentions=0&amp;truncate=1" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="_method" value="put" /><input type="hidden" name="authenticity_token" value="stgXmhhhfCt0sy+fLbAA6Ylx8tUJ3e7VOmX/NOX/iAUSNc3xHqkIdjlMp7Erd3QMAEkx+LDVNWEOTwY65B5zGA==" />
+        <div class="Box-header bg-gray border-bottom p-3">
+          <button class="Box-btn-octicon js-toggle-user-status-edit btn-octicon float-right" type="reset" aria-label="Close dialog" data-close-dialog>
+            <svg class="octicon octicon-x" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"/></svg>
+          </button>
+          <h3 class="Box-title f5 text-bold text-gray-dark">Edit status</h3>
+        </div>
+        <input type="hidden" name="emoji" class="js-user-status-emoji-field" value="">
+        <input type="hidden" name="organization_id" class="js-user-status-org-id-field" value="">
+        <div class="px-3 py-2 text-gray-dark">
+          <div class="js-characters-remaining-container js-suggester-container position-relative mt-2">
+            <div class="input-group d-table form-group my-0 js-user-status-form-group">
+              <span class="input-group-button d-table-cell v-align-middle" style="width: 1%">
+                <button type="button" aria-label="Choose an emoji" class="btn-outline btn js-toggle-user-status-emoji-picker btn-open-emoji-picker p-0">
+                  <span class="js-user-status-original-emoji" hidden></span>
+                  <span class="js-user-status-custom-emoji"></span>
+                  <span class="js-user-status-no-emoji-icon" >
+                    <svg class="octicon octicon-smiley" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm4.81 12.81a6.72 6.72 0 0 1-2.17 1.45c-.83.36-1.72.53-2.64.53-.92 0-1.81-.17-2.64-.53-.81-.34-1.55-.83-2.17-1.45a6.773 6.773 0 0 1-1.45-2.17A6.59 6.59 0 0 1 1.21 8c0-.92.17-1.81.53-2.64.34-.81.83-1.55 1.45-2.17.62-.62 1.36-1.11 2.17-1.45A6.59 6.59 0 0 1 8 1.21c.92 0 1.81.17 2.64.53.81.34 1.55.83 2.17 1.45.62.62 1.11 1.36 1.45 2.17.36.83.53 1.72.53 2.64 0 .92-.17 1.81-.53 2.64-.34.81-.83 1.55-1.45 2.17zM4 6.8v-.59c0-.66.53-1.19 1.2-1.19h.59c.66 0 1.19.53 1.19 1.19v.59c0 .67-.53 1.2-1.19 1.2H5.2C4.53 8 4 7.47 4 6.8zm5 0v-.59c0-.66.53-1.19 1.2-1.19h.59c.66 0 1.19.53 1.19 1.19v.59c0 .67-.53 1.2-1.19 1.2h-.59C9.53 8 9 7.47 9 6.8zm4 3.2c-.72 1.88-2.91 3-5 3s-4.28-1.13-5-3c-.14-.39.23-1 .66-1h8.59c.41 0 .89.61.75 1z"/></svg>
+                  </span>
+                </button>
+              </span>
+              <input type="text" autocomplete="off" data-maxlength="80" class="js-suggester-field d-table-cell width-full form-control js-user-status-message-field js-characters-remaining-field" placeholder="What's happening?" name="message" value="" aria-label="What is your current status?">
+              <div class="error">Could not update your status, please try again.</div>
+            </div>
+            <div class="suggester-container">
+              <div class="suggester js-suggester js-navigation-container" data-url="/autocomplete/user-suggestions" data-no-org-url="/autocomplete/user-suggestions" data-org-url="/suggestions" hidden>
+              </div>
+            </div>
+            <div style="margin-left: 53px" class="my-1 text-small label-characters-remaining js-characters-remaining" data-suffix="remaining" hidden>
+              80 remaining
+            </div>
+          </div>
+          <include-fragment class="js-user-status-emoji-picker" data-url="/users/status/emoji"></include-fragment>
+          <div class="overflow-auto ml-n3 mr-n3 px-3" style="max-height: 33vh">
+            <div class="user-status-suggestions js-user-status-suggestions collapsed overflow-hidden">
+              <h4 class="f6 text-normal my-3">Suggestions:</h4>
+              <div class="mx-3 mt-2 clearfix">
+                  <div class="float-left col-6">
+                      <button type="button" value=":palm_tree:" class="d-flex flex-items-baseline flex-items-stretch lh-condensed f6 btn-link link-gray no-underline js-predefined-user-status mb-1">
+                        <div class="emoji-status-width mr-2 v-align-middle js-predefined-user-status-emoji">
+                          <g-emoji alias="palm_tree" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f334.png">🌴</g-emoji>
+                        </div>
+                        <div class="d-flex flex-items-center no-underline js-predefined-user-status-message ws-normal text-left" style="border-left: 1px solid transparent">
+                          On vacation
+                        </div>
+                      </button>
+                      <button type="button" value=":face_with_thermometer:" class="d-flex flex-items-baseline flex-items-stretch lh-condensed f6 btn-link link-gray no-underline js-predefined-user-status mb-1">
+                        <div class="emoji-status-width mr-2 v-align-middle js-predefined-user-status-emoji">
+                          <g-emoji alias="face_with_thermometer" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f912.png">🤒</g-emoji>
+                        </div>
+                        <div class="d-flex flex-items-center no-underline js-predefined-user-status-message ws-normal text-left" style="border-left: 1px solid transparent">
+                          Out sick
+                        </div>
+                      </button>
+                  </div>
+                  <div class="float-left col-6">
+                      <button type="button" value=":house:" class="d-flex flex-items-baseline flex-items-stretch lh-condensed f6 btn-link link-gray no-underline js-predefined-user-status mb-1">
+                        <div class="emoji-status-width mr-2 v-align-middle js-predefined-user-status-emoji">
+                          <g-emoji alias="house" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f3e0.png">🏠</g-emoji>
+                        </div>
+                        <div class="d-flex flex-items-center no-underline js-predefined-user-status-message ws-normal text-left" style="border-left: 1px solid transparent">
+                          Working from home
+                        </div>
+                      </button>
+                      <button type="button" value=":dart:" class="d-flex flex-items-baseline flex-items-stretch lh-condensed f6 btn-link link-gray no-underline js-predefined-user-status mb-1">
+                        <div class="emoji-status-width mr-2 v-align-middle js-predefined-user-status-emoji">
+                          <g-emoji alias="dart" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f3af.png">🎯</g-emoji>
+                        </div>
+                        <div class="d-flex flex-items-center no-underline js-predefined-user-status-message ws-normal text-left" style="border-left: 1px solid transparent">
+                          Focusing
+                        </div>
+                      </button>
+                  </div>
+              </div>
+            </div>
+            <div class="user-status-limited-availability-container">
+              <div class="form-checkbox my-0">
+                <input type="checkbox" name="limited_availability" value="1" class="js-user-status-limited-availability-checkbox" data-default-message="I may be slow to respond." aria-describedby="limited-availability-help-text-truncate-true" id="limited-availability-truncate-true">
+                <label class="d-block f5 text-gray-dark mb-1" for="limited-availability-truncate-true">
+                  Busy
+                </label>
+                <p class="note" id="limited-availability-help-text-truncate-true">
+                  When others mention you, assign you, or request your review,
+                  GitHub will let them know that you have limited availability.
+                </p>
+              </div>
+            </div>
+          </div>
+            
+
+<div class="d-inline-block f5 border-top mr-2 pt-3 pb-2" >
+  <div class="d-inline-block mr-1">
+    Clear status
+  </div>
+
+  <details class="js-user-status-expire-drop-down f6 dropdown details-reset details-overlay d-inline-block mr-2">
+    <summary class="f5 btn-link link-gray-dark border px-2 py-1 rounded-1" aria-haspopup="true">
+      <div class="js-user-status-expiration-interval-selected d-inline-block v-align-baseline">
+        Never
+      </div>
+      <div class="dropdown-caret"></div>
+    </summary>
+
+    <ul class="dropdown-menu dropdown-menu-se pl-0 overflow-auto" style="width: 220px; max-height: 15.5em">
+      <li>
+        <button type="button" class="btn-link dropdown-item js-user-status-expire-button ws-normal" title="Never">
+          <span class="d-inline-block text-bold mb-1">Never</span>
+          <div class="f6 lh-condensed">Keep this status until you clear your status or edit your status.</div>
+        </button>
+      </li>
+      <li class="dropdown-divider" role="none"></li>
+        <li>
+          <button type="button" class="btn-link dropdown-item ws-normal js-user-status-expire-button" title="in 30 minutes" value="2019-04-25T10:32:06+02:00">
+            in 30 minutes
+          </button>
+        </li>
+        <li>
+          <button type="button" class="btn-link dropdown-item ws-normal js-user-status-expire-button" title="in 1 hour" value="2019-04-25T11:02:06+02:00">
+            in 1 hour
+          </button>
+        </li>
+        <li>
+          <button type="button" class="btn-link dropdown-item ws-normal js-user-status-expire-button" title="in 4 hours" value="2019-04-25T14:02:06+02:00">
+            in 4 hours
+          </button>
+        </li>
+        <li>
+          <button type="button" class="btn-link dropdown-item ws-normal js-user-status-expire-button" title="today" value="2019-04-25T23:59:59+02:00">
+            today
+          </button>
+        </li>
+        <li>
+          <button type="button" class="btn-link dropdown-item ws-normal js-user-status-expire-button" title="this week" value="2019-04-28T23:59:59+02:00">
+            this week
+          </button>
+        </li>
+    </ul>
+  </details>
+  <input class="js-user-status-expiration-date-input" type="hidden" name="expires_at" value="">
+</div>
+
+          <include-fragment class="js-user-status-org-picker" data-url="/users/status/organizations"></include-fragment>
+        </div>
+        <div class="d-flex flex-items-center flex-justify-between p-3 border-top">
+          <button type="submit" disabled class="width-full btn btn-primary mr-2 js-user-status-submit">
+            Set status
+          </button>
+          <button type="button" disabled class="width-full js-clear-user-status-button btn ml-2 ">
+            Clear status
+          </button>
+        </div>
+</form>    </details-dialog>
+  </details>
+</div>
+
+      </div>
+      <div role="none" class="dropdown-divider"></div>
+
+
+    <a role="menuitem" class="dropdown-item" href="/simsal35" data-ga-click="Header, go to profile, text:your profile">Your profile</a>
+    <a role="menuitem" class="dropdown-item" href="/simsal35?tab=repositories" data-ga-click="Header, go to repositories, text:your repositories">Your repositories</a>
+
+    <a role="menuitem" class="dropdown-item" href="/simsal35?tab=projects" data-ga-click="Header, go to projects, text:your projects">Your projects</a>
+
+    <a role="menuitem" class="dropdown-item" href="/simsal35?tab=stars" data-ga-click="Header, go to starred repos, text:your stars">Your stars</a>
+      <a role="menuitem" class="dropdown-item" href="https://gist.github.com/" data-ga-click="Header, your gists, text:your gists">Your gists</a>
+
+    <div role="none" class="dropdown-divider"></div>
+    <a role="menuitem" class="dropdown-item" href="https://help.github.com" data-ga-click="Header, go to help, text:help">Help</a>
+    <a role="menuitem" class="dropdown-item" href="/settings/profile" data-ga-click="Header, go to settings, icon:settings">Settings</a>
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="logout-form" action="/logout" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="Rwwudq5X9gIBuJ0qbRAbPmS/2lh6QovA0q0ostbF3vy4nZUkLUNEziaodiq1qjh118LxmZupkTEdTHwWV+ttfg==" />
+      
+      <button type="submit" class="dropdown-item dropdown-signout" data-ga-click="Header, sign out, icon:logout" role="menuitem">
+        Sign out
+      </button>
+</form>  </details-menu>
+</details>
+
+    </div>
+
+  </header>
+
+      
+
+  </div>
+
+  <div id="start-of-content" class="show-on-focus"></div>
+
+
+    <div id="js-flash-container">
+
+</div>
+
+
+
+  <div class="application-main " data-commit-hovercards-enabled>
+        <div itemscope itemtype="http://schema.org/SoftwareSourceCode" class="">
+    <main  >
+      
+
+
+  
+
+
+
+
+
+
+  <div class="pagehead repohead instapaper_ignore readability-menu experiment-repo-nav pt-0 pt-lg-4 ">
+    <div class="repohead-details-container clearfix container-lg p-responsive d-none d-lg-block">
+
+      <ul class="pagehead-actions">
+
+
+
+  <li>
+    
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form data-remote="true" class="clearfix js-social-form js-social-container" action="/notifications/subscribe" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="dDLY+6iVPcqUiQYpABlv9tKOFelzjBz3p5s+pgkqieZUNwGroJQk50DjbOSNU87ouBswHRbgmAO7tg8jGiu9zg==" />      <input type="hidden" name="repository_id" value="179801507">
+
+      <details class="details-reset details-overlay select-menu float-left">
+        <summary class="select-menu-button float-left btn btn-sm btn-with-count" data-hydro-click="{&quot;event_type&quot;:&quot;repository.click&quot;,&quot;payload&quot;:{&quot;target&quot;:&quot;WATCH_BUTTON&quot;,&quot;repository_id&quot;:179801507,&quot;client_id&quot;:&quot;765411270.1554628069&quot;,&quot;originating_request_id&quot;:&quot;5856:19F12:12A21D4:1C6A41C:5CC16978&quot;,&quot;originating_url&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure/blob/master/README.md&quot;,&quot;referrer&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure&quot;,&quot;user_id&quot;:49247890}}" data-hydro-click-hmac="5b899f38681b84901870c6ed50f2aa53669c65aa8a4b7dfb96415a3a9794eaa2" data-ga-click="Repository, click Watch settings, action:blob#show">          <span data-menu-button>
+              <svg class="octicon octicon-eye v-align-text-bottom" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.06 2C3 2 0 8 0 8s3 6 8.06 6C13 14 16 8 16 8s-3-6-7.94-6zM8 12c-2.2 0-4-1.78-4-4 0-2.2 1.8-4 4-4 2.22 0 4 1.8 4 4 0 2.22-1.78 4-4 4zm2-4c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"/></svg>
+              Watch
+          </span>
+</summary>        <details-menu
+          class="select-menu-modal position-absolute mt-5"
+          style="z-index: 99;">
+          <div class="select-menu-header">
+            <span class="select-menu-title">Notifications</span>
+          </div>
+          <div class="select-menu-list">
+            <button type="submit" name="do" value="included" class="select-menu-item width-full" aria-checked="true" role="menuitemradio">
+              <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"/></svg>
+              <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">Not watching</span>
+                <span class="description">Be notified only when participating or @mentioned.</span>
+                <span class="hidden-select-button-text" data-menu-button-contents>
+                  <svg class="octicon octicon-eye v-align-text-bottom" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.06 2C3 2 0 8 0 8s3 6 8.06 6C13 14 16 8 16 8s-3-6-7.94-6zM8 12c-2.2 0-4-1.78-4-4 0-2.2 1.8-4 4-4 2.22 0 4 1.8 4 4 0 2.22-1.78 4-4 4zm2-4c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"/></svg>
+                  Watch
+                </span>
+              </div>
+            </button>
+
+            <button type="submit" name="do" value="release_only" class="select-menu-item width-full" aria-checked="false" role="menuitemradio">
+              <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"/></svg>
+              <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">Releases only</span>
+                <span class="description">Be notified of new releases, and when participating or @mentioned.</span>
+                <span class="hidden-select-button-text" data-menu-button-contents>
+                  <svg class="octicon octicon-eye v-align-text-bottom" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.06 2C3 2 0 8 0 8s3 6 8.06 6C13 14 16 8 16 8s-3-6-7.94-6zM8 12c-2.2 0-4-1.78-4-4 0-2.2 1.8-4 4-4 2.22 0 4 1.8 4 4 0 2.22-1.78 4-4 4zm2-4c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"/></svg>
+                  Unwatch releases
+                </span>
+              </div>
+            </button>
+
+            <button type="submit" name="do" value="subscribed" class="select-menu-item width-full" aria-checked="false" role="menuitemradio">
+              <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"/></svg>
+              <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">Watching</span>
+                <span class="description">Be notified of all conversations.</span>
+                <span class="hidden-select-button-text" data-menu-button-contents>
+                  <svg class="octicon octicon-eye v-align-text-bottom" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.06 2C3 2 0 8 0 8s3 6 8.06 6C13 14 16 8 16 8s-3-6-7.94-6zM8 12c-2.2 0-4-1.78-4-4 0-2.2 1.8-4 4-4 2.22 0 4 1.8 4 4 0 2.22-1.78 4-4 4zm2-4c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"/></svg>
+                  Unwatch
+                </span>
+              </div>
+            </button>
+
+            <button type="submit" name="do" value="ignore" class="select-menu-item width-full" aria-checked="false" role="menuitemradio">
+              <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"/></svg>
+              <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">Ignoring</span>
+                <span class="description">Never be notified.</span>
+                <span class="hidden-select-button-text" data-menu-button-contents>
+                  <svg class="octicon octicon-mute v-align-text-bottom" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 2.81v10.38c0 .67-.81 1-1.28.53L3 10H1c-.55 0-1-.45-1-1V7c0-.55.45-1 1-1h2l3.72-3.72C7.19 1.81 8 2.14 8 2.81zm7.53 3.22l-1.06-1.06-1.97 1.97-1.97-1.97-1.06 1.06L11.44 8 9.47 9.97l1.06 1.06 1.97-1.97 1.97 1.97 1.06-1.06L13.56 8l1.97-1.97z"/></svg>
+                  Stop ignoring
+                </span>
+              </div>
+            </button>
+          </div>
+        </details-menu>
+      </details>
+        <a class="social-count js-social-count"
+          href="/simsal35/AA_frequencies_sec_structure/watchers"
+          aria-label="0 users are watching this repository">
+          0
+        </a>
+</form>
+  </li>
+
+  <li>
+      <div class="js-toggler-container js-social-container starring-container ">
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="starred js-social-form" action="/simsal35/AA_frequencies_sec_structure/unstar" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="GoKCJThRuxDZGVvBhA7JpTDcihOT9rA6AdmXy2sqOaY2qETxtV3j1I91e3ufZ1JFVjG8BEU47v/UiMIVmOCGJQ==" />
+      <input type="hidden" name="context" value="repository"></input>
+      <button type="submit" class="btn btn-sm btn-with-count js-toggler-target" aria-label="Unstar this repository" title="Unstar simsal35/AA_frequencies_sec_structure" data-hydro-click="{&quot;event_type&quot;:&quot;repository.click&quot;,&quot;payload&quot;:{&quot;target&quot;:&quot;UNSTAR_BUTTON&quot;,&quot;repository_id&quot;:179801507,&quot;client_id&quot;:&quot;765411270.1554628069&quot;,&quot;originating_request_id&quot;:&quot;5856:19F12:12A21D4:1C6A41C:5CC16978&quot;,&quot;originating_url&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure/blob/master/README.md&quot;,&quot;referrer&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure&quot;,&quot;user_id&quot;:49247890}}" data-hydro-click-hmac="839aa3e362f95d96879f4b97a80e98f289ff3bf14e558430951dfd6f6fd099d4" data-ga-click="Repository, click unstar button, action:blob#show; text:Unstar">        <svg class="octicon octicon-star v-align-text-bottom" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74L14 6z"/></svg>
+        Unstar
+</button>        <a class="social-count js-social-count" href="/simsal35/AA_frequencies_sec_structure/stargazers"
+           aria-label="0 users starred this repository">
+          0
+        </a>
+</form>
+    <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="unstarred js-social-form" action="/simsal35/AA_frequencies_sec_structure/star" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="EDZaVdaXgR+kgCSBcwsLDs25l1kpQ9iJfj8cPGcglWODahDy47loKeS8NylGO5xoWh4ezArgE7A5xjPPjZf+ww==" />
+      <input type="hidden" name="context" value="repository"></input>
+      <button type="submit" class="btn btn-sm btn-with-count js-toggler-target" aria-label="Unstar this repository" title="Star simsal35/AA_frequencies_sec_structure" data-hydro-click="{&quot;event_type&quot;:&quot;repository.click&quot;,&quot;payload&quot;:{&quot;target&quot;:&quot;STAR_BUTTON&quot;,&quot;repository_id&quot;:179801507,&quot;client_id&quot;:&quot;765411270.1554628069&quot;,&quot;originating_request_id&quot;:&quot;5856:19F12:12A21D4:1C6A41C:5CC16978&quot;,&quot;originating_url&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure/blob/master/README.md&quot;,&quot;referrer&quot;:&quot;https://github.com/simsal35/AA_frequencies_sec_structure&quot;,&quot;user_id&quot;:49247890}}" data-hydro-click-hmac="b6933cce46e57a196fbe96968b847c4b43154993ebba1d0a96a489362feb16a9" data-ga-click="Repository, click star button, action:blob#show; text:Star">        <svg class="octicon octicon-star v-align-text-bottom" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74L14 6z"/></svg>
+        Star
+</button>        <a class="social-count js-social-count" href="/simsal35/AA_frequencies_sec_structure/stargazers"
+           aria-label="0 users starred this repository">
+          0
+        </a>
+</form>  </div>
+
+  </li>
+
+  <li>
+        <span class="btn btn-sm btn-with-count disabled tooltipped tooltipped-sw" aria-label="Cannot fork because you own this repository and are not a member of any organizations.">
+          <svg class="octicon octicon-repo-forked v-align-text-bottom" viewBox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1a1.993 1.993 0 0 0-1 3.72V6L5 8 3 6V4.72A1.993 1.993 0 0 0 2 1a1.993 1.993 0 0 0-1 3.72V6.5l3 3v1.78A1.993 1.993 0 0 0 5 15a1.993 1.993 0 0 0 1-3.72V9.5l3-3V4.72A1.993 1.993 0 0 0 8 1zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3 10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3-10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"/></svg>
+          Fork
+</span>
+    <a href="/simsal35/AA_frequencies_sec_structure/network/members" class="social-count"
+       aria-label="10 users forked this repository">
+      10
+    </a>
+  </li>
+</ul>
+
+      <h1 class="public ">
+  <svg class="octicon octicon-repo-forked" viewBox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1a1.993 1.993 0 0 0-1 3.72V6L5 8 3 6V4.72A1.993 1.993 0 0 0 2 1a1.993 1.993 0 0 0-1 3.72V6.5l3 3v1.78A1.993 1.993 0 0 0 5 15a1.993 1.993 0 0 0 1-3.72V9.5l3-3V4.72A1.993 1.993 0 0 0 8 1zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3 10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3-10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"/></svg>
+  <span class="author" itemprop="author"><a class="url fn" rel="author" data-hovercard-type="user" data-hovercard-url="/hovercards?user_id=49247890" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/simsal35">simsal35</a></span><!--
+--><span class="path-divider">/</span><!--
+--><strong itemprop="name"><a data-pjax="#js-repo-pjax-container" href="/simsal35/AA_frequencies_sec_structure">AA_frequencies_sec_structure</a></strong>
+  
+
+    <span class="fork-flag">
+      <span class="text">forked from <a href="/biodatasciencetulln/AA_frequencies_sec_structure">biodatasciencetulln/AA_frequencies_sec_structure</a></span>
+    </span>
+</h1>
+
+    </div>
+    
+<nav class="reponav js-repo-nav js-sidenav-container-pjax container-lg p-responsive d-none d-lg-block"
+     itemscope
+     itemtype="http://schema.org/BreadcrumbList"
+    aria-label="Repository"
+     data-pjax="#js-repo-pjax-container">
+
+  <span itemscope itemtype="http://schema.org/ListItem" itemprop="itemListElement">
+    <a class="js-selected-navigation-item selected reponav-item" itemprop="url" data-hotkey="g c" aria-current="page" data-selected-links="repo_source repo_downloads repo_commits repo_releases repo_tags repo_branches repo_packages /simsal35/AA_frequencies_sec_structure" href="/simsal35/AA_frequencies_sec_structure">
+      <svg class="octicon octicon-code" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M9.5 3L8 4.5 11.5 8 8 11.5 9.5 13 14 8 9.5 3zm-5 0L0 8l4.5 5L6 11.5 2.5 8 6 4.5 4.5 3z"/></svg>
+      <span itemprop="name">Code</span>
+      <meta itemprop="position" content="1">
+</a>  </span>
+
+
+  <span itemscope itemtype="http://schema.org/ListItem" itemprop="itemListElement">
+    <a data-hotkey="g p" itemprop="url" class="js-selected-navigation-item reponav-item" data-selected-links="repo_pulls checks /simsal35/AA_frequencies_sec_structure/pulls" href="/simsal35/AA_frequencies_sec_structure/pulls">
+      <svg class="octicon octicon-git-pull-request" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M11 11.28V5c-.03-.78-.34-1.47-.94-2.06C9.46 2.35 8.78 2.03 8 2H7V0L4 3l3 3V4h1c.27.02.48.11.69.31.21.2.3.42.31.69v6.28A1.993 1.993 0 0 0 10 15a1.993 1.993 0 0 0 1-3.72zm-1 2.92c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zM4 3c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v6.56A1.993 1.993 0 0 0 2 15a1.993 1.993 0 0 0 1-3.72V4.72c.59-.34 1-.98 1-1.72zm-.8 10c0 .66-.55 1.2-1.2 1.2-.65 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"/></svg>
+      <span itemprop="name">Pull requests</span>
+      <span class="Counter">0</span>
+      <meta itemprop="position" content="3">
+</a>  </span>
+
+
+
+    <a data-hotkey="g b" class="js-selected-navigation-item reponav-item" data-selected-links="repo_projects new_repo_project repo_project /simsal35/AA_frequencies_sec_structure/projects" href="/simsal35/AA_frequencies_sec_structure/projects">
+      <svg class="octicon octicon-project" viewBox="0 0 15 16" version="1.1" width="15" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 12h3V2h-3v10zm-4-2h3V2H6v8zm-4 4h3V2H2v12zm-1 1h13V1H1v14zM14 0H1a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1z"/></svg>
+      Projects
+      <span class="Counter" >0</span>
+</a>
+
+    <a class="js-selected-navigation-item reponav-item" data-hotkey="g w" data-selected-links="repo_wiki /simsal35/AA_frequencies_sec_structure/wiki" href="/simsal35/AA_frequencies_sec_structure/wiki">
+      <svg class="octicon octicon-book" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M3 5h4v1H3V5zm0 3h4V7H3v1zm0 2h4V9H3v1zm11-5h-4v1h4V5zm0 2h-4v1h4V7zm0 2h-4v1h4V9zm2-6v9c0 .55-.45 1-1 1H9.5l-1 1-1-1H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h5.5l1 1 1-1H15c.55 0 1 .45 1 1zm-8 .5L7.5 3H2v9h6V3.5zm7-.5H9.5l-.5.5V12h6V3z"/></svg>
+      Wiki
+</a>
+    <a class="js-selected-navigation-item reponav-item" data-selected-links="repo_graphs repo_contributors dependency_graph pulse people alerts /simsal35/AA_frequencies_sec_structure/pulse" href="/simsal35/AA_frequencies_sec_structure/pulse">
+      <svg class="octicon octicon-graph" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M16 14v1H0V0h1v14h15zM5 13H3V8h2v5zm4 0H7V3h2v10zm4 0h-2V6h2v7z"/></svg>
+      Insights
+</a>
+    <a class="js-selected-navigation-item reponav-item" data-selected-links="repo_settings repo_branch_settings hooks integration_installations repo_keys_settings issue_template_editor /simsal35/AA_frequencies_sec_structure/settings" href="/simsal35/AA_frequencies_sec_structure/settings">
+      <svg class="octicon octicon-gear" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14 8.77v-1.6l-1.94-.64-.45-1.09.88-1.84-1.13-1.13-1.81.91-1.09-.45-.69-1.92h-1.6l-.63 1.94-1.11.45-1.84-.88-1.13 1.13.91 1.81-.45 1.09L0 7.23v1.59l1.94.64.45 1.09-.88 1.84 1.13 1.13 1.81-.91 1.09.45.69 1.92h1.59l.63-1.94 1.11-.45 1.84.88 1.13-1.13-.92-1.81.47-1.09L14 8.75v.02zM7 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>
+      Settings
+</a>
+</nav>
+
+  <div class="reponav-wrapper reponav-small d-lg-none">
+  <nav class="reponav js-reponav text-center no-wrap"
+       itemscope
+       itemtype="http://schema.org/BreadcrumbList">
+
+    <span itemscope itemtype="http://schema.org/ListItem" itemprop="itemListElement">
+      <a class="js-selected-navigation-item selected reponav-item" itemprop="url" aria-current="page" data-selected-links="repo_source repo_downloads repo_commits repo_releases repo_tags repo_branches repo_packages /simsal35/AA_frequencies_sec_structure" href="/simsal35/AA_frequencies_sec_structure">
+        <span itemprop="name">Code</span>
+        <meta itemprop="position" content="1">
+</a>    </span>
+
+
+    <span itemscope itemtype="http://schema.org/ListItem" itemprop="itemListElement">
+      <a itemprop="url" class="js-selected-navigation-item reponav-item" data-selected-links="repo_pulls checks /simsal35/AA_frequencies_sec_structure/pulls" href="/simsal35/AA_frequencies_sec_structure/pulls">
+        <span itemprop="name">Pull requests</span>
+        <span class="Counter">0</span>
+        <meta itemprop="position" content="3">
+</a>    </span>
+
+
+      <span itemscope itemtype="http://schema.org/ListItem" itemprop="itemListElement">
+        <a itemprop="url" class="js-selected-navigation-item reponav-item" data-selected-links="repo_projects new_repo_project repo_project /simsal35/AA_frequencies_sec_structure/projects" href="/simsal35/AA_frequencies_sec_structure/projects">
+          <span itemprop="name">Projects</span>
+          <span class="Counter">0</span>
+          <meta itemprop="position" content="5">
+</a>      </span>
+
+      <span itemscope itemtype="http://schema.org/ListItem" itemprop="itemListElement">
+        <a itemprop="url" class="js-selected-navigation-item reponav-item" data-selected-links="repo_wiki /simsal35/AA_frequencies_sec_structure/wiki" href="/simsal35/AA_frequencies_sec_structure/wiki">
+          <span itemprop="name">Wiki</span>
+          <meta itemprop="position" content="6">
+</a>      </span>
+
+      <a class="js-selected-navigation-item reponav-item" data-selected-links="pulse /simsal35/AA_frequencies_sec_structure/pulse" href="/simsal35/AA_frequencies_sec_structure/pulse">
+        Pulse
+</a>
+
+  </nav>
+</div>
+
+
+  </div>
+<div class="container-lg new-discussion-timeline experiment-repo-nav  p-responsive">
+  <div class="repository-content ">
+
+    
+    
+
+
+
+  
+    <a class="d-none js-permalink-shortcut" data-hotkey="y" href="/simsal35/AA_frequencies_sec_structure/blob/aa0a138a2804a7591798d3587999f95f53d01f9e/README.md">Permalink</a>
+
+    <!-- blob contrib key: blob_contributors:v21:522e1bbb59ef839e1015972f09197c2f -->
+      
+
+    <div class="d-flex flex-items-start mb-3 flex-column flex-md-row">
+      <span class="d-flex flex-justify-between width-full width-md-auto">
+        
+<details class="details-reset details-overlay select-menu branch-select-menu ">
+  <summary class="btn btn-sm select-menu-button css-truncate"
+           data-hotkey="w"
+           
+           title="Switch branches or tags">
+    <i>Branch:</i>
+    <span class="css-truncate-target">master</span>
+  </summary>
+
+  <details-menu class="select-menu-modal position-absolute" style="z-index: 99;" src="/simsal35/AA_frequencies_sec_structure/ref-list/master/README.md?source_action=show&amp;source_controller=blob" preload>
+    <include-fragment class="select-menu-loading-overlay anim-pulse">
+      <svg height="32" class="octicon octicon-octoface" viewBox="0 0 16 16" version="1.1" width="32" aria-hidden="true"><path fill-rule="evenodd" d="M14.7 5.34c.13-.32.55-1.59-.13-3.31 0 0-1.05-.33-3.44 1.3-1-.28-2.07-.32-3.13-.32s-2.13.04-3.13.32c-2.39-1.64-3.44-1.3-3.44-1.3-.68 1.72-.26 2.99-.13 3.31C.49 6.21 0 7.33 0 8.69 0 13.84 3.33 15 7.98 15S16 13.84 16 8.69c0-1.36-.49-2.48-1.3-3.35zM8 14.02c-3.3 0-5.98-.15-5.98-3.35 0-.76.38-1.48 1.02-2.07 1.07-.98 2.9-.46 4.96-.46 2.07 0 3.88-.52 4.96.46.65.59 1.02 1.3 1.02 2.07 0 3.19-2.68 3.35-5.98 3.35zM5.49 9.01c-.66 0-1.2.8-1.2 1.78s.54 1.79 1.2 1.79c.66 0 1.2-.8 1.2-1.79s-.54-1.78-1.2-1.78zm5.02 0c-.66 0-1.2.79-1.2 1.78s.54 1.79 1.2 1.79c.66 0 1.2-.8 1.2-1.79s-.53-1.78-1.2-1.78z"/></svg>
+    </include-fragment>
+  </details-menu>
+</details>
+
+        <div class="BtnGroup flex-shrink-0 d-md-none">
+          <a href="/simsal35/AA_frequencies_sec_structure/find/master"
+                class="js-pjax-capture-input btn btn-sm BtnGroup-item"
+                data-pjax
+                data-hotkey="t">
+            Find file
+          </a>
+          <clipboard-copy value="README.md" class="btn btn-sm BtnGroup-item">
+            Copy path
+          </clipboard-copy>
+        </div>
+      </span>
+      <h2 id="blob-path" class="breadcrumb flex-auto min-width-0 text-normal flex-md-self-center ml-md-2 mr-md-3 my-2 my-md-0">
+        <span class="js-repo-root text-bold"><span class="js-path-segment"><a data-pjax="true" href="/simsal35/AA_frequencies_sec_structure"><span>AA_frequencies_sec_structure</span></a></span></span><span class="separator">/</span><strong class="final-path">README.md</strong>
+      </h2>
+
+      <div class="BtnGroup flex-shrink-0 d-none d-md-inline-block">
+        <a href="/simsal35/AA_frequencies_sec_structure/find/master"
+              class="js-pjax-capture-input btn btn-sm BtnGroup-item"
+              data-pjax
+              data-hotkey="t">
+          Find file
+        </a>
+        <clipboard-copy value="README.md" class="btn btn-sm BtnGroup-item">
+          Copy path
+        </clipboard-copy>
+      </div>
+    </div>
+
+
+
+    <include-fragment src="/simsal35/AA_frequencies_sec_structure/contributors/master/README.md" class="Box Box--condensed commit-loader">
+      <div class="Box-body bg-blue-light f6">
+        Fetching contributors&hellip;
+      </div>
+
+      <div class="Box-body d-flex flex-items-center" >
+          <img alt="" class="loader-loading mr-2" src="https://github.githubassets.com/images/spinners/octocat-spinner-32-EAF2F5.gif" width="16" height="16" />
+        <span class="text-red h6 loader-error">Cannot retrieve contributors at this time</span>
+      </div>
+</include-fragment>
+
+
+
+
+    <div class="Box mt-3 position-relative">
+      
+<div class="Box-header py-2 d-flex flex-column flex-shrink-0 flex-md-row flex-md-items-center">
+
+  <div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1 mt-2 mt-md-0">
+      52 lines (40 sloc)
+      <span class="file-info-divider"></span>
+    6 KB
+  </div>
+
+  <div class="d-flex py-1 py-md-0 flex-auto flex-order-1 flex-md-order-2 flex-sm-grow-0 flex-justify-between">
+
+    <div class="BtnGroup">
+      <a id="raw-url" class="btn btn-sm BtnGroup-item" href="/simsal35/AA_frequencies_sec_structure/raw/master/README.md">Raw</a>
+        <a class="btn btn-sm js-update-url-with-hash BtnGroup-item" data-hotkey="b" href="/simsal35/AA_frequencies_sec_structure/blame/master/README.md">Blame</a>
+      <a rel="nofollow" class="btn btn-sm BtnGroup-item" href="/simsal35/AA_frequencies_sec_structure/commits/master/README.md">History</a>
+    </div>
+
+
+    <div>
+            <a class="btn-octicon tooltipped tooltipped-nw hide-sm"
+               href="https://desktop.github.com"
+               aria-label="Open this file in GitHub Desktop"
+               data-ga-click="Repository, open with desktop, type:windows">
+                <svg class="octicon octicon-device-desktop" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M15 2H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h5.34c-.25.61-.86 1.39-2.34 2h8c-1.48-.61-2.09-1.39-2.34-2H15c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm0 9H1V3h14v8z"/></svg>
+            </a>
+
+            <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="inline-form js-update-url-with-hash" action="/simsal35/AA_frequencies_sec_structure/edit/master/README.md" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="N5h4+qXTZLgbR3JkZm/egMTUXLO30ccNEaSv/IN0TS3CaH6B+3LxVPaRs+iLz8tinKWYVvcfY8Mtc8xn8ofVzg==" />
+              <button class="btn-octicon tooltipped tooltipped-nw" type="submit"
+                aria-label="Edit this file" data-hotkey="e" data-disable-with>
+                <svg class="octicon octicon-pencil" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M0 12v3h3l8-8-3-3-8 8zm3 2H1v-2h1v1h1v1zm10.3-9.3L12 6 9 3l1.3-1.3a.996.996 0 0 1 1.41 0l1.59 1.59c.39.39.39 1.02 0 1.41z"/></svg>
+              </button>
+</form>
+          <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="inline-form" action="/simsal35/AA_frequencies_sec_structure/delete/master/README.md" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="8rhlc+8PJegmbTRCgEmc74lW3bcQF487aWxq+kZUFhZX7wzsQJYe2LVTgGj/3C3Fnk81Nn4CIhEKhd6UTo3bKw==" />
+            <button class="btn-octicon btn-octicon-danger tooltipped tooltipped-nw" type="submit"
+              aria-label="Delete this file" data-disable-with>
+              <svg class="octicon octicon-trashcan" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M11 2H9c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1H2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H3V5h1v8h1V5h1v8h1V5h1v8h1V5h1v9zm1-10H2V3h9v1z"/></svg>
+            </button>
+</form>    </div>
+  </div>
+</div>
+
+      
+  <div id="readme" class="Box-body readme blob instapaper_body js-code-block-container">
+    <article class="markdown-body entry-content p-3 p-md-6" itemprop="text"><h2><a id="user-content-transparent-and-reproducible-organization-of-a-computational-project" class="anchor" aria-hidden="true" href="#transparent-and-reproducible-organization-of-a-computational-project"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Transparent and reproducible organization of a computational project</h2>
+<p>The goal of this course is to practice the organization of computational projects. A good organization allows to easily understand what was done and repeat it. Important learning objectives are a standardized project structure, the writing of driver scripts and the usage of a version control system for code development, backup and sharing with others.</p>
+<p>As a sample project, we will work on a problem described in Exercise 12 ("Final Project: A Structural Bioinformatics Problem") from Ekmekci et al., 2016. I'm pretty sure it was inspired by the real-life publication <em>Amino acid propensities for secondary structures are inﬂuenced by the protein structural class</em>, Constantini et al., 2006.</p>
+<p>Exercise description (from Ekmekci et al., 2016):</p>
+<blockquote>
+<p>As a final exercise, a cumulative project is presented below. This project addresses a substantive scientific question, and its successful completion requires one to apply and integrate the skills from the foregoing exercises. <strong>Note that a project such as this — and really any project involving more than a few dozen lines of code — will benefit greatly from an initial planning phase.</strong> In this initial stage of software design, one should consider the basic functions, classes, algorithms, control flow, and overall code structure.</p>
+</blockquote>
+<blockquote>
+<p>First, obtain a set of several hundred protein structures from the PDB, as plaintext pdb ﬁles (the exact number of entries is immaterial). Then, from this pool of data, determine the relative frequencies of the constituent amino acids for each protein secondary structural class; use only the three descriptors “helix,” “sheet,” and, for any AA not within a helix or sheet, “irregular.” (Hint: In considering ﬁle parsing and potential data structures, search online for the PDB’s ﬁle-format speciﬁcations.) Output your statistical data to a human-readable ﬁle format (e.g., comma-separated values, .csv) such that the results can be opened in a statistical or graphical software package for further processing and analysis. As a bonus exercise, use Python’s <em>matplotlib</em> package to visualize the ﬁndings of your structural bioinformatics analysis.</p>
+</blockquote>
+<p>Let's go with 50 protein structures from the PDB. Additionally, you are provided with 10 more files with protein structures in pdb format - maybe from a collaborator, who asked you to include them in the analysis.</p>
+<hr>
+<h2><a id="user-content-task-list" class="anchor" aria-hidden="true" href="#task-list"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Task List</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" checked=""> Plan the project: Define project goals, milestones and work packages (as fine-grained as possible). Identify requirements like the tools/libraries/databases you intend to use. Define the required Python scripts in terms of input and output. Estimate the time to complete the work packages. Write this information into the "notes.txt" file. E.g.:
+<ul>
+<li>Milestone 1: ... -&gt; Deliverable(s): ...
+<ul>
+<li>WP 1: ... -&gt; x hours</li>
+<li>WP 2: ... -&gt; y hours</li>
+<li>WP 3: ... ; library to be used: biopython PDB module; Python script: input = ..., output = ... -&gt; z hours</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" checked=""> Create the project structure, including all required files and directories. Write the Bash driver scripts for all steps of the project. The driver scripts create required directories at runtime (like <code>data</code> for input data and <code>results</code> for output files) and call other tools or Python scripts that do the work. (To make life easier, I will provide the Python scripts later.)</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" checked=""> Put the relevant files (like <code>notes.txt</code>, Bash and Python scripts, and all other files required to reproduce your results) under version control with Git, and push them to a (private) Github repository. Add "biodatasciencetulln" as a collaborator.</li>
+</ul>
+<h2><a id="user-content-final-goal" class="anchor" aria-hidden="true" href="#final-goal"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Final goal</h2>
+<p>The goal is to provide a complete computational project on Github, that can be downloaded and executed by any other person. This person should be able to reproduce all steps and obtain all results by doing this:</p>
+<ul>
+<li><code>git clone https://github.com/YOUR-USER/YOUR-PROJECT.git</code></li>
+<li><code>cd YOUR-PROJECT</code></li>
+<li>Project structure should be as described in the best-practices cheat sheet; for each enumerated directory (with names like <code>01_download</code>):
+<ul>
+<li>Enter directory</li>
+<li>Execute the Bash driver scripts (with names like <code>01_run.sh</code>, there should be no more than one or two)</li>
+<li>All results should be automatically generated and placed in <code>/results</code>; the input data is located in <code>/data</code></li>
+<li>Leave directory</li>
+</ul>
+</li>
+</ul>
+<p>Before the final submission, you should execute these steps in a clean environment to make sure that everything works. The grading is based on whether all tasks were completed and the project can be reproduced in the described way. 20 points are maximally achievable:</p>
+<ul>
+<li>5 points for the usage of the version control system</li>
+<li>5 points for a transparent project structure</li>
+<li>5 points for informative <code>notes</code> file(s) with all project-relevant notes, like project planning, important links or your observations</li>
+<li>5 points for informative and working driver scripts</li>
+<li>Bonus points:
+<ul>
+<li>1 point for a contribution to git-for-science repo</li>
+<li>1 point for a markdown-formatted best-practices-cheatsheet.md</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4><a id="user-content-references" class="anchor" aria-hidden="true" href="#references"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>References</h4>
+<ul>
+<li>Noble, William Stafford. 2009. “A Quick Guide to Organizing Computational Biology Projects.” PLOS Computational Biology 5 (7): e1000424. <a href="https://doi.org/10.1371/journal.pcbi.1000424" rel="nofollow">https://doi.org/10.1371/journal.pcbi.1000424</a>.</li>
+<li>Blischak, John D., Emily R. Davenport, and Greg Wilson. 2016. “A Quick Introduction to Version Control with Git and GitHub.” PLOS Computational Biology 12 (1): e1004668. <a href="https://doi.org/10.1371/journal.pcbi.1004668" rel="nofollow">https://doi.org/10.1371/journal.pcbi.1004668</a>.</li>
+<li>Github tutorials, e.g. <a href="https://www.atlassian.com/git/tutorials/" rel="nofollow">https://www.atlassian.com/git/tutorials/</a></li>
+<li>Ekmekci, Berk, Charles E. McAnany, and Cameron Mura. 2016. “An Introduction to Programming for Bioscientists: A Python-Based Primer.” PLOS Computational Biology 12 (6): e1004867. <a href="https://doi.org/10.1371/journal.pcbi.1004867" rel="nofollow">https://doi.org/10.1371/journal.pcbi.1004867</a>.</li>
+<li>Costantini, Susan, Giovanni Colonna, and Angelo M. Facchiano. 2006. “Amino Acid Propensities for Secondary Structures Are Influenced by the Protein Structural Class.” Biochemical and Biophysical Research Communications 342 (2): 441–51. <a href="https://doi.org/10.1016/j.bbrc.2006.01.159" rel="nofollow">https://doi.org/10.1016/j.bbrc.2006.01.159</a>.</li>
+</ul>
+</article>
+  </div>
+
+    </div>
+
+  
+
+  <details class="details-reset details-overlay details-overlay-dark">
+    <summary data-hotkey="l" aria-label="Jump to line"></summary>
+    <details-dialog class="Box Box--overlay d-flex flex-column anim-fade-in fast linejump" aria-label="Jump to line">
+      <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="js-jump-to-line-form Box-body d-flex" action="" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+        <input class="form-control flex-auto mr-3 linejump-input js-jump-to-line-field" type="text" placeholder="Jump to line&hellip;" aria-label="Jump to line" autofocus>
+        <button type="submit" class="btn" data-close-dialog>Go</button>
+</form>    </details-dialog>
+  </details>
+
+
+
+  </div>
+  <div class="modal-backdrop js-touch-events"></div>
+</div>
+
+    </main>
+  </div>
+  
+
+  </div>
+
+        
+<div class="footer container-lg width-full p-responsive" role="contentinfo">
+  <div class="position-relative d-flex flex-row-reverse flex-lg-row flex-wrap flex-lg-nowrap flex-justify-center flex-lg-justify-between pt-6 pb-2 mt-6 f6 text-gray border-top border-gray-light ">
+    <ul class="list-style-none d-flex flex-wrap col-12 col-lg-6 flex-justify-center flex-lg-justify-start mb-2 mb-lg-0">
+      <li class="mr-3">&copy; 2019 <span title="0.59507s from unicorn-6d978cb89b-jrvnz">GitHub</span>, Inc.</li>
+        <li class="mr-3"><a data-ga-click="Footer, go to terms, text:terms" href="https://github.com/site/terms">Terms</a></li>
+        <li class="mr-3"><a data-ga-click="Footer, go to privacy, text:privacy" href="https://github.com/site/privacy">Privacy</a></li>
+        <li class="mr-3"><a data-ga-click="Footer, go to security, text:security" href="https://github.com/security">Security</a></li>
+        <li class="mr-3"><a href="https://githubstatus.com/" data-ga-click="Footer, go to status, text:status">Status</a></li>
+        <li><a data-ga-click="Footer, go to help, text:help" href="https://help.github.com">Help</a></li>
+    </ul>
+
+    <a aria-label="Homepage" title="GitHub" class="footer-octicon mx-lg-4" href="https://github.com">
+      <svg height="24" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="24" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+</a>
+   <ul class="list-style-none d-flex flex-wrap col-12 col-lg-6 flex-justify-center flex-lg-justify-end mb-2 mb-lg-0">
+        <li class="mr-3"><a data-ga-click="Footer, go to contact, text:contact" href="https://github.com/contact">Contact GitHub</a></li>
+        <li class="mr-3"><a href="https://github.com/pricing" data-ga-click="Footer, go to Pricing, text:Pricing">Pricing</a></li>
+      <li class="mr-3"><a href="https://developer.github.com" data-ga-click="Footer, go to api, text:api">API</a></li>
+      <li class="mr-3"><a href="https://training.github.com" data-ga-click="Footer, go to training, text:training">Training</a></li>
+        <li class="mr-3"><a href="https://github.blog" data-ga-click="Footer, go to blog, text:blog">Blog</a></li>
+        <li><a data-ga-click="Footer, go to about, text:about" href="https://github.com/about">About</a></li>
+
+    </ul>
+  </div>
+  <div class="d-flex flex-justify-center pb-6">
+    <span class="f6 text-gray-light"></span>
+  </div>
+</div>
+
+
+
+  <div id="ajax-error-message" class="ajax-error-message flash flash-error">
+    <svg class="octicon octicon-alert" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg>
+    <button type="button" class="flash-close js-ajax-error-dismiss" aria-label="Dismiss error">
+      <svg class="octicon octicon-x" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"/></svg>
+    </button>
+    You can’t perform that action at this time.
+  </div>
+
+
+    
+    <script crossorigin="anonymous" integrity="sha512-znYYMX+Ozti23C6Tyo0HKKjG0BPEZICHfEWMgOV7pBypdUmo42DBzCMKUgB80IiwSYIrZBO5F02NXRrZUIHy1Q==" type="application/javascript" src="https://github.githubassets.com/assets/frameworks-7404f2c3.js"></script>
+    
+    <script crossorigin="anonymous" async="async" integrity="sha512-LNQ/6T+w3Smgq2vX5BgLuf6fUzzJMD7trUvysuob1CXIVO8W+T3VpGB6+nludzQgWBIYyr0OEdFuZnhV70+RXQ==" type="application/javascript" src="https://github.githubassets.com/assets/github-bootstrap-54184628.js"></script>
+    
+    
+    
+  <div class="js-stale-session-flash stale-session-flash flash flash-warn flash-banner" hidden
+    >
+    <svg class="octicon octicon-alert" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg>
+    <span class="signed-in-tab-flash">You signed in with another tab or window. <a href="">Reload</a> to refresh your session.</span>
+    <span class="signed-out-tab-flash">You signed out in another tab or window. <a href="">Reload</a> to refresh your session.</span>
+  </div>
+  <template id="site-details-dialog">
+  <details class="details-reset details-overlay details-overlay-dark lh-default text-gray-dark" open>
+    <summary aria-haspopup="dialog" aria-label="Close dialog"></summary>
+    <details-dialog class="Box Box--overlay d-flex flex-column anim-fade-in fast">
+      <button class="Box-btn-octicon m-0 btn-octicon position-absolute right-0 top-0" type="button" aria-label="Close dialog" data-close-dialog>
+        <svg class="octicon octicon-x" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"/></svg>
+      </button>
+      <div class="octocat-spinner my-6 js-details-dialog-spinner"></div>
+    </details-dialog>
+  </details>
+</template>
+
+  <div class="Popover js-hovercard-content position-absolute" style="display: none; outline: none;" tabindex="0">
+  <div class="Popover-message Popover-message--bottom-left Popover-message--large Box box-shadow-large" style="width:360px;">
+  </div>
+</div>
+
+  <div aria-live="polite" class="js-global-screen-reader-notice sr-only"></div>
+
+  </body>
+</html>
+
